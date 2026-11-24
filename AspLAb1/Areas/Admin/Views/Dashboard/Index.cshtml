@@ -1,0 +1,52 @@
+@model IReadOnlyList<KeyValuePair<string, long>>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Panel Admina - Dashboard</h2>
+
+<div class="row my-3">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Łączna liczba żądań</h5>
+                <p class="card-text fs-3">@ViewBag.TotalRequests</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Książki w pamięci</h5>
+                <p class="card-text fs-3">@ViewBag.BooksCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Autorzy w pamięci</h5>
+                <p class="card-text fs-3">@ViewBag.AuthorsCount</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4>Top 5 najpopularniejszych ścieżek</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ścieżka</th>
+            <th>Liczba żądań</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><code>@item.Key</code></td>
+                <td>@item.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
