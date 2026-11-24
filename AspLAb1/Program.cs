@@ -1,5 +1,8 @@
+using AspLAb1.Data;
 using AspLAb1.Filters;
 using AspLAb1.Middleware;
+using AspLAb1.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +11,19 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<GlobalExceptionFilter>();
 });
+builder.Services.AddDbContext<AppDbContext>(o =>
+    o.UseSqlite(builder.Configuration.GetConnectionString("Default")));
+builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<LogActionFilter>();
 builder.Services.AddSingleton<RequestStats>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 app.UseMiddleware<RequestTimingMiddleware>();
 

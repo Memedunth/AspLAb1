@@ -14,6 +14,9 @@
         <dt class="col-sm-3">Autor</dt>
         <dd class="col-sm-9">@Model.Author</dd>
 
+        <dt class="col-sm-3">Wydawnictwo</dt>
+        <dd class="col-sm-9">@Model.Publisher</dd>
+
         <dt class="col-sm-3">ISBN</dt>
         <dd class="col-sm-9">@Model.Isbn</dd>
 
@@ -26,6 +29,9 @@
         <dt class="col-sm-3">Cena</dt>
         <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
     </dl>
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edytuj</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Usuń</a>
 }
 
 <a asp-action="Index" class="btn btn-secondary">Powrót do listy</a>

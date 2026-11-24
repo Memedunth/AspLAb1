@@ -1,6 +1,10 @@
-@model List<Book>
+@model AspLAb1.Services.PagedResult<Book>
 @{
     ViewData["Title"] = "Książki";
+    var currentSort = (string?)ViewBag.Sort ?? "title";
+    var currentDir = (string?)ViewBag.Dir ?? "asc";
+    var currentSearch = (string?)ViewBag.Search;
+    var pageSize = (int?)ViewBag.PageSize ?? Model.PageSize;
 }
 
 @section Styles {
@@ -10,7 +14,34 @@
 }
 
 <h2 class="books-heading">Książki</h2>
-<a asp-action="Create" class="btn btn-primary mb-3">+ Dodaj książkę</a>
+@if (ViewBag.FilterInfo is string filterInfo)
+{
+    <p class="text-muted">@filterInfo</p>
+}
+@if (ViewBag.ArchiveInfo is string archiveInfo)
+{
+    <p class="text-muted">Archiwum: @archiveInfo</p>
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <a asp-action="Create" class="btn btn-primary">+ Dodaj książkę</a>
+
+    <form asp-action="Index" method="get" class="d-flex flex-wrap gap-2">
+        <input type="text" name="search" value="@currentSearch" class="form-control w-auto" placeholder="Szukaj po tytule lub ISBN" />
+        <select name="sort" class="form-select w-auto">
+            <option value="title" selected="@(currentSort == "title")">Tytuł</option>
+            <option value="price" selected="@(currentSort == "price")">Cena</option>
+            <option value="date" selected="@(currentSort == "date")">Data wydania</option>
+        </select>
+        <select name="dir" class="form-select w-auto">
+            <option value="asc" selected="@(currentDir == "asc")">Rosnąco</option>
+            <option value="desc" selected="@(currentDir == "desc")">Malejąco</option>
+        </select>
+        <input type="hidden" name="pageSize" value="@pageSize" />
+        <button type="submit" class="btn btn-outline-secondary">Filtruj</button>
+    </form>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -18,15 +49,36 @@
             <th>Autor</th>
             <th>Rok</th>
             <th>Cena</th>
+            <th>Akcje</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var b in Model)
+        @foreach (var b in Model.Items)
         {
             <partial name="_BookRow" model="b" />
         }
     </tbody>
 </table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Stronicowanie książek">
+        <ul class="pagination">
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <li class="page-item @(p == Model.Page ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@p"
+                       asp-route-pageSize="@pageSize"
+                       asp-route-search="@currentSearch"
+                       asp-route-sort="@currentSort"
+                       asp-route-dir="@currentDir">@p</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
 
 @section Scripts {
     <script>
@@ -35,5 +87,5 @@
 }
 
 @section Footer {
-    <span class="ms-2">| Katalog książek (@Model.Count)</span>
+    <span class="ms-2">| Katalog książek (@Model.TotalCount)</span>
 }

@@ -1,0 +1,26 @@
+@model Book
+@{
+    ViewData["Title"] = "Usuń książkę";
+}
+
+<h2>Usuń książkę</h2>
+
+<div class="alert alert-warning">
+    Czy na pewno chcesz usunąć książkę <strong>@Model.Title</strong> (@Model.Author)?
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">ISBN</dt>
+    <dd class="col-sm-9">@Model.Isbn</dd>
+
+    <dt class="col-sm-3">Rok wydania</dt>
+    <dd class="col-sm-9">@Model.PublicationDate?.Year</dd>
+
+    <dt class="col-sm-3">Cena</dt>
+    <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
+</dl>
+
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <button type="submit" class="btn btn-danger">Usuń</button>
+    <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+</form>
