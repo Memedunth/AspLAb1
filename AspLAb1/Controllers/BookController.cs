@@ -94,7 +94,7 @@ public class BookController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(int id, BookFormViewModel vm)
+    public async Task<IActionResult> Edit([FromRoute] int id, BookFormViewModel vm)
     {
         if (id != vm.Id) return BadRequest();
 

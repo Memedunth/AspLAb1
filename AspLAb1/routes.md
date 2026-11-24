@@ -9,8 +9,12 @@
 | `/books/year/{year:int:min(1450)}` | `Book.ByYear` | ANY |
 | `/Book/Create/{id?}` | `Book.Create` | GET |
 | `/Book/Create/{id?}` | `Book.Create` | POST |
+| `/Book/Delete/{id?}` | `Book.Delete` | GET |
+| `/Book/Delete/{id?}` | `Book.Delete` | POST |
 | `/Book/Details/{id:int}` | `Book.Details` | GET |
 | `/Book/Echo/{id?}` | `Book.Echo` | ANY |
+| `/Book/Edit/{id?}` | `Book.Edit` | GET |
+| `/Book/Edit/{id?}` | `Book.Edit` | POST |
 | `/Book/Health/{id?}` | `Book.Health` | ANY |
 | `/Book/Hello/{id?}` | `Book.Hello` | ANY |
 | `/Book/Import/{id?}` | `Book.Import` | POST |
