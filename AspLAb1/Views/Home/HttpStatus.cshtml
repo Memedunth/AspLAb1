@@ -1,0 +1,9 @@
+@{
+    ViewData["Title"] = $"Błąd {ViewBag.StatusCode}";
+}
+
+<div class="py-4">
+    <h1 class="display-5 text-danger">Błąd HTTP @ViewBag.StatusCode</h1>
+    <p class="lead">@ViewBag.Message</p>
+    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">Powrót na stronę główną</a>
+</div>
