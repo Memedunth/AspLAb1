@@ -2,20 +2,27 @@ using System;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using AspLAb1.Models; 
+using AspLAb1.Filters;
+using AspLAb1.Models;
 
 namespace AspLAb1.Controllers;
 
+[ServiceFilter(typeof(LogActionFilter), Order = 1)]
+[MeasureTime(Order = 2)]
 public class BookController : Controller
 {
     public IActionResult Hello() => Content("Witaj w BookStore!", "text/plain; charset=utf-8");
 
     public IActionResult Status(int code = 200) => StatusCode(code);
 
-    public IActionResult Details(int id)
+    [HttpGet("Book/Details/{id:int}")]
+    public Task<IActionResult> Details(int id)
     {
-        ViewBag.Id = id;
-        return View();
+        var book = BookStoreMemory.Books.FirstOrDefault(b => b.Id == id);
+        if (book is null) return Task.FromResult<IActionResult>(NotFound());
+
+        ViewBag.Id = book.Id;
+        return Task.FromResult<IActionResult>(View(book));
     }
 
     public IActionResult Echo([FromQuery] string name = "nieznajomy", [FromQuery] int count = 1) =>
@@ -71,4 +78,35 @@ public class BookController : Controller
         TempData["Success"] = $"Dodano książkę „{vm.Title}”.";
         return RedirectToAction(nameof(Index));
     }
+
+    public Task<IActionResult> ByYear(int year)
+    {
+        var filtered = BookStoreMemory.Books
+            .Where(b => b.PublicationDate?.Year == year)
+            .ToList();
+        ViewBag.FilterInfo = $"Rok wydania: {year}";
+        return Task.FromResult<IActionResult>(View(nameof(Index), filtered));
+    }
+
+    public Task<IActionResult> ByIsbn(string isbn)
+    {
+        var normalized = isbn.Replace("-", "").Replace(" ", "");
+        var book = BookStoreMemory.Books.FirstOrDefault(
+            b => b.Isbn.Replace("-", "").Replace(" ", "") == normalized);
+
+        if (book is null) return Task.FromResult<IActionResult>(NotFound());
+        return Task.FromResult<IActionResult>(RedirectToAction(nameof(Details), new { id = book.Id }));
+    }
+
+    [HttpGet("archive/{year:int}/{month:int:range(1,12)}")]
+    public IActionResult Archive(int year, int month)
+    {
+        var filtered = BookStoreMemory.Books
+            .Where(b => b.PublicationDate?.Year == year)
+            .ToList();
+        ViewBag.ArchiveInfo = $"{year}-{month:D2}";
+        return View(nameof(Index), filtered);
+    }
+
+    public IActionResult Boom() => throw new InvalidOperationException("Celowy wyjątek");
 }
