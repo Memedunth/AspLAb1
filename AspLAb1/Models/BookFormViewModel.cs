@@ -7,6 +7,8 @@ namespace AspLAb1.Models;
 /// </summary>
 public class BookFormViewModel : IValidatableObject
 {
+    public int Id { get; set; }
+
     [Required(ErrorMessage = "Tytuł jest wymagany")]
     [StringLength(200, MinimumLength = 2, ErrorMessage = "Tytuł: 2-200 znaków")]
     [Display(Name = "Tytuł")]
@@ -37,6 +39,10 @@ public class BookFormViewModel : IValidatableObject
     [RegularExpression(@"^[A-Z]{3}-\d{4}$", ErrorMessage = "Kod wydawcy musi mieć format AAA-1234 (np. PWN-2024)")]
     [Display(Name = "Kod wydawcy")]
     public string? PublisherCode { get; set; }
+
+    [StringLength(150)]
+    [Display(Name = "Wydawnictwo")]
+    public string? Publisher { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
